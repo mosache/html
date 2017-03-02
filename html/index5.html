@@ -5,8 +5,9 @@
 	<title>任务五：零基础HTML及CSS编码（二）</title>
 	<style type="text/css">
 		* {margin: 0;padding: 0;}
-		p,li,a,span {font-size: 12px;}
-		p {text-indent: 2em;}
+		h2 {font-size: 16px}
+		p,li,a,span,dd,td {font-size: 14px;}
+		p {text-indent: 2em;line-height: 1.5}
 		body {background-color: #eee}
 		/*nav*/
 		nav {width: 100%;background-color: black;padding: 10px;position: relative;}
@@ -16,9 +17,28 @@
 		.content .left {float: left;width: 100%}
 		.content .left>div {background-color: white;padding: 10px;margin:10px;margin-right: 340px;font-size: 12px}
 		.content .subContent5 {background-color: white;padding: 10px;margin: 10px;float: left;width: 300px;margin-left: -330px}
-		.subContent3 .img_div {float: left;margin: 10px;text-align: center;}
+		.subContent3 .img_div {float: left;margin: 10px;text-align: center;border: 2px solid #eee;padding: 10px}
 		.subContent4 {clear: both;}
+		table {border-spacing: 0px}
+		table thead td{background-color: black;color: white;width: 200px}
+		table tbody tr:nth-child(4) {
+			background-color: gray
+		}
+		table tbody tr:nth-child(4) td:nth-child(2){
+		}
+		table tr {width: 200px;height: 20px;text-align: center;}
+		.subContent5 div,.subContent5 h2,.subContent5 input,.subContent5 select {margin-bottom: 10px;margin-top: 10px}
+		.subContent5 button {width: 100%;height:40px;margin-top: 20px;background-color: #0099cc;border-radius: 10px;color: white;font-size: 14px}
 		/*footer*/
+		.footer {
+			width: 100%;
+			padding: 20px;
+			background-color: black;
+			clear: both;
+			color: white;
+			font-size: 14px;
+			text-align: center;
+		}
 		/*clearfix*/
 		.clearfix:before,.clearfix:after{
 			content: "";
@@ -30,12 +50,12 @@
 		.clearfix {
 			*zoom: 1;
 		}
-
+		
 	</style>
 </head>
 <body>
 	<nav role = "navigation" class="nav">
-		<img src="./image/logo.png" style="width: 100px;height: 40px" />
+		<img src="./image/logo.png" style="width: 120px;height: 40px;" />
 		<ul>
 			<li>导航链接1</li>
 			<li>导航链接2</li>
@@ -125,13 +145,13 @@
 			</dt>
 			<p>下面是一个表格</p>
 			<table>
-				<th>
+				<thead>
 					<tr>
 						<td>表头</td>
 						<td>表头</td>
 						<td>表头</td>
 					</tr>
-				</th>
+				</thead>
 				<tb>
 					<tr>
 						<td>表内容单元格</td>
@@ -150,7 +170,8 @@
 					</tr>
 					<tr>
 						<td>总计</td>
-						<td>1000</td>
+						<td style="column-span: 3">1000</td>
+						<td></td>
 					</tr>
 				</tb>
 			</table>
@@ -158,7 +179,7 @@
 		</div>
 
 		<div class="subContent5">
-			<h2>侧栏标题</h2>
+			<h2>这里以后是一个侧栏，这是侧栏的标题</h2>
 			输入邮箱地址&nbsp&nbsp&nbsp<input type="text" name="" value="这是一个文本输入框">
 			<div>邮箱地址请按要求输入</div>
 			输入密码&nbsp&nbsp&nbsp<input type="password" name="" value="这是一个文本输入框"><br>
@@ -172,11 +193,14 @@
 			爱好&nbsp&nbsp&nbsp <input type="checkbox" name="like">运动</input>
 			<input type="checkbox" name="like">艺术</input>
 			<input type="checkbox" name="like">科学</input><br>
-			个人描述&nbsp&nbsp&nbsp <textarea rows="3"></textarea><br>
-			<button value="admit">admit</button>
+			<span style="float: left;font-size: 14px">个人描述</span>
+			&nbsp&nbsp&nbsp <textarea style="resize: none;">请输入多行描述</textarea><br>
+			<button value="admit">确认提交</button>
 
 		</div>
 	</div>
-	<div class="footer"></div>
+	<div class="footer">
+		版权所有&copy
+	</div>
 </body>
 </html>
