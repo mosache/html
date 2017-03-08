@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {margin: 0;padding: 0;}
+		.container {width: 900px;position: absolute;left: 50%;margin-left: -450px;margin-top: 10px;text-align: center;}
+		#list {list-style: none;}
+		#list li {background: red;color: #ffffff;min-width:30px;height: 30px;text-align: center;font-size: 14px;float:left;margin: 8px}
+		#list li span {position: relative;top: 8px}
+	</style>
+</head>
+<body>	
+<div class="container">
+	<input type="text" id="input">
+	<button type="button" id="left_in">左侧入</button>
+	<button type="button" id="right_in">右侧入</button>
+	&nbsp;&nbsp;&nbsp;
+	<button type="button" id="left_out">左侧出</button>
+	<button type="button" id="right_out">右侧出</button><br>
+
+	<ul id="list">
+		<li><span>17</span></li>
+		<li><span>20</span></li>
+		<li><span>22</span></li>
+		<li><span>3</span></li>
+		<li><span>33</span></li>
+
+	</ul>
+</div>
+		
+	<script type="text/javascript">
+		(function(){
+			var left_in = document.getElementById("left_in");
+			var right_in = document.getElementById("right_in");
+			var left_out = document.getElementById("left_out");
+			var right_out = document.getElementById("right_out");
+			var list = document.getElementById("list");
+			var input = document.getElementById("input");
+
+			function left_in_f() {
+				var num = input.value;
+				if(!isNum(num)){
+					alert("Not a num!");
+					input.value = "";
+					return;
+				}
+				var numNode = document.createElement("li");
+				var span = document.createElement("span");
+				span.innerHTML = num;
+				numNode.appendChild(span);
+				list.insertBefore(numNode,list.firstChild);
+			}
+
+			function right_in_f() {
+				var num = input.value;
+				if(!isNum(num)){
+					alert("Not a num!");
+					input.value = "";
+					return;
+				}
+				var numNode = document.createElement("li");
+				var span = document.createElement("span");
+				span.innerHTML = num;
+				
+				numNode.appendChild(span);
+				list.appendChild(numNode);
+			}
+
+			function left_out_f() {
+
+				var node = list.firstElementChild;
+				if(node){
+					node.animEnd = function(){
+					let span = node.firstElementChild;
+					let num = span.innerHTML;
+					list.removeChild(list.firstElementChild);
+					alert(num);
+					}
+					doAnim(node);
+				}else{
+					alert('null!');
+				}
+	
+			}
+
+			function right_out_f() {
+				var node = list.lastElementChild;
+				if(node){
+					node.animEnd = function(){
+						let span = node.firstElementChild;
+						let num = span.innerHTML;
+						list.removeChild(node);
+						alert(num);
+					}
+					doAnim(node);
+				}else{
+					alert('null!');
+				}
+
+			}
+
+			function isNum(input) {
+				return !isNaN(parseInt(input))&&Object.prototype.toString.call(parseInt(input)) === "[object Number]";
+			}
+
+			function isNaN(input) {
+				return input !==input;
+			}
+
+			function doAnim(node) {
+				clearInterval(timer);
+				var timer = null;
+				node.style.opacity = 1;
+				timer = setInterval(function() {
+				var temp = node.style.opacity-=0.05;
+				node.style.opacity = temp;
+				if(temp <= 0 ){
+					node.animEnd();
+					clearInterval(timer);
+				}
+				},30);
+
+			}
+
+			list.addEventListener('click',function(event){
+				var evet  =event || window.event;
+				var target = event.target;
+				if(target.nodeName == "SPAN"){
+					target = target.parentNode;	
+				}
+				target.animEnd = function(){
+						let span = target.firstElementChild;
+						let num = span.innerHTML;
+						list.removeChild(target);
+						alert(num);
+					}
+					doAnim(target);
+			});
+			left_in.onclick = left_in_f;
+			right_in.onclick = right_in_f;
+			left_out.onclick = left_out_f;
+			right_out.onclick = right_out_f;
+		})();
+
+
+
+	</script>
+</body>
+</html>
