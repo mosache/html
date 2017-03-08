@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {margin: 0;padding: 0;}
+		.container {width: 900px;position: absolute;left: 50%;margin-left: -450px;margin-top: 10px;text-align: center;height: 200px;font-size: 0;letter-spacing: -4px;word-spacing: -4px}
+		#list {list-style: none;overflow: hidden;position: absolute;width: 100%;}
+		#list li {background: red;color: #ffffff;width:30px;height: 30px;text-align: center;font-size: 14px;display: inline-block;*display:inline;zoom:1;margin: 2px;line-height: 30px;vertical-align: bottom;letter-spacing: normal;word-spacing: normal;}
+		button {letter-spacing: normal;word-spacing: normal;}
+	</style>
+</head>
+<body>	
+<div class="container">
+	<input type="text" id="input">
+	<button type="button" id="left_in">左侧入</button>
+	<button type="button" id="right_in">右侧入</button>
+	&nbsp;&nbsp;
+	<button type="button" id="left_out">左侧出</button>
+	<button type="button" id="right_out">右侧出</button>
+	<button type="button" id="sort">排序</button>
+	<br>
+
+	<ul id="list">
+	</ul>
+</div>
+		
+	<script type="text/javascript">
+		(function(){
+			const maxNode = 60;
+			var left_in = document.getElementById("left_in");
+			var right_in = document.getElementById("right_in");
+			var left_out = document.getElementById("left_out");
+			var right_out = document.getElementById("right_out");
+			var list = document.getElementById("list");
+			var input = document.getElementById("input");
+			var sort = document.getElementById('sort');
+			function left_in_f() {
+				var num = input.value;
+				if(!isNum(num)){
+					alert("input error!");
+					input.value = "";
+					return;
+				}
+				if(isChildNodeOverMax(maxNode)){
+					alert('too much children');
+					return;
+				}
+
+				list.insertBefore(createNode(num),list.firstChild);
+				}
+			
+
+			function right_in_f() {
+				var num = input.value;
+				if(!isNum(num)){
+					alert("input error ");
+					input.value = "";
+					return;
+				}
+				if(isChildNodeOverMax(maxNode)){
+					alert('too much children');
+					return;
+				}
+				list.appendChild(createNode(num));
+			}
+
+			function left_out_f() {
+				var node = list.firstElementChild;
+				if(node){
+					doAnim(node);
+				}else{
+					alert('null!');
+				}
+			}
+
+			function right_out_f() {
+				var node = list.lastElementChild;
+				if(node){
+					doAnim(node);
+				}else{
+					alert('null!');
+				}
+
+			}
+
+			function isNum(input) {
+				return !isNaN(parseInt(input))&&Object.prototype.toString.call(parseInt(input)) === "[object Number]"&&input>=10&&input<=100;
+			}
+
+			function isNaN(input) {
+				return input !==input;
+			}
+
+			function doAnim(node) {
+				clearInterval(timer);
+				var timer = null;
+				node.style.opacity = 1;
+				node.animEnd = function(){
+					let num = this.innerHTML;
+					list.removeChild(this);
+					alert(num);
+				};
+				timer = setInterval(function() {
+				var temp = node.style.opacity-=0.05;
+				node.style.opacity = temp;
+				if(temp <= 0 ){
+					node.animEnd();
+					clearInterval(timer);
+				}
+				},30);
+
+			}
+
+			function createNode(num) {
+				var numNode = document.createElement("li");
+				let height = 30+(num-10)*(100/91) + "px";
+				numNode.style.height = height;
+				numNode.style.lineHeight = height;
+				numNode.innerHTML = num;
+				return numNode;
+			}
+
+			function isChildNodeOverMax(max) {
+				return list.children.length == max;
+			}
+
+			function sort_f() {
+				var children = Array.from(list.children);
+				var sortedChildren = children.sort((a,b)=>{
+					return parseInt(a.innerHTML) - parseInt(b.innerHTML);
+				});
+				let i;
+				for(i =0;i<children.length;i++){
+					list.removeChild(children[i]);
+				}
+
+				for(i = 0;i<sortedChildren.length;i++){
+					list.appendChild(sortedChildren[i]);
+				}
+			}
+
+			list.addEventListener('click',function(event){
+				var evet  =event || window.event;
+				var target = event.target || event.srcElement;
+				if(target.nodeName != this.nodeName)
+				doAnim(target);
+			});
+			left_in.onclick = left_in_f;
+			right_in.onclick = right_in_f;
+			left_out.onclick = left_out_f;
+			right_out.onclick = right_out_f;
+			sort.onclick = sort_f;
+
+		})();
+
+
+
+	</script>
+</body>
+</html>
