@@ -6,6 +6,12 @@
 </head>
 <body>
 	<script type="text/javascript">
+		/**TraversalType*/
+		var TraversalType = {
+			preOrder : 1,
+			midOrder : 2,
+			backOrder : 3,
+		}
 		/**Node*/
 		function Node(data) {
 			this.data = data;
@@ -23,10 +29,72 @@
 			
 		}
 
+		Tree.prototype.traversal = function(type){
+			switch(type){
+				case TraversalType.preOrder:
+					preOrder(this._rootNode);
+					break;
+				case TraversalType.midOrder:
+					midOrder(this._rootNode);
+					break;
+				case TraversalType.backOrder:
+					backOrder(this._rootNode);
+					break;
+			}
+			/**前序遍历*/
+			function preOrder(node){
+				if(node!=null){
+					alert(node.data);	
+					preOrder(node.left);
+					preOrder(node.right);
+				}
+			}
+
+			/**中序遍历*/
+			function midOrder(node){
+				if(node!=null){
+					midOrder(node.left);
+					alert(node.data);
+					midOrder(node.right);
+				}
+			}
+
+			/**后序遍历*/
+			function backOrder(node){
+				if(node!=null){
+					backOrder(node.left);
+					backOrder(node.right);
+					alert(node.data);
+				}
+			}
+
+		}
+
+		Tree.prototype.createTree = function(node,dataArr){
+			if(data <= 10){
+				node = new Node(data);
+				createTree(node.left);
+			}
+		}
 		/**tree end*/
 
+		var root = new Node("A");
+		var n1 = new Node("B");
+		var n2 = new Node("C");
+		var n3 = new Node("D");
+		var n4 = new Node("E");
+		var n5 = new Node("F");
+		var n6 = new Node("G");
 
+		root.left = n1;
+		root.right = n2;
+		n1.left = n3;
+		n1.right = n5;
+		n3.right = n4;
+		n5.left = n6;
 
+		var tree = new Tree(root);
+		tree.traversal(TraversalType.backOrder);
 	</script>
 </body>
 </html>
