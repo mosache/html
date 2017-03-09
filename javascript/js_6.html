@@ -7,9 +7,10 @@
 		* {margin: 0;padding: 0;}
 		.container {width: 900px;position: absolute;left: 50%;margin-left: -450px;margin-top: 10px;text-align: center;}
 		#list {list-style: none;}
-		#list li {background: red;color: #ffffff;min-width:30px;height: 30px;text-align: center;font-size: 14px;float:left;margin: 8px}
+		#list li {background: red;color: #ffffff;min-width:30px;height: 30px;text-align: center;font-size: 14px;float:left;margin: 8px;display: block;}
 		#list li span {position: relative;top: 8px}
 		button {margin-top: 10px}
+		.style_match {box-shadow: 0 0 8px #0cc;}
 	</style>
 </head>
 <body>	
@@ -27,6 +28,7 @@
 </div>
 		
 	<script type="text/javascript">
+		'use strict';
 		(function(){
 			const maxNode = 60;
 			var left_in = document.getElementById("left_in");
@@ -35,6 +37,8 @@
 			var right_out = document.getElementById("right_out");
 			var list = document.getElementById("list");
 			var input = document.getElementById("input");
+			var search = document.getElementById('search');
+			var search_btn = document.getElementById('search_btn');
 			
 			function left_in_f() {
 				var num = input.value;
@@ -47,23 +51,24 @@
 					alert('too much children');
 					return;
 				}
-				insertBefore(num);
+				insert(num,1);
 				// list.insertBefore(createNode(num),list.firstChild);
 				}
 			
 
 			function right_in_f() {
 				var num = input.value;
-				if(!isNum(num)){
-					alert("input error ");
-					input.value = "";
-					return;
-				}
+				// if(!isNum(num)){
+				// 	alert("input error ");
+				// 	input.value = "";
+				// 	return;
+				// }
 				if(isChildNodeOverMax(maxNode)){
 					alert('too much children');
 					return;
 				}
-				list.appendChild(createNode(num));
+				insert(num,2);
+				// list.appendChild(createNode(num));
 			}
 
 			function left_out_f() {
@@ -133,25 +138,77 @@
 				doAnim(target);
 			});
 
-			function insertBefore(value) {
-				var isNull = /^\s+$/;
+			function insert(value,type) {
+				var isNull = /^\s+$|^[\S]{0}$/;
 				
 				if(isNull.test(value)){
 					alert("null str!");
 					return;
 				}
-				let reg_splice = /\r|\t|\^\s+\$|,|，|。|。|，|;|；|；/;
+				let reg_splice = /\r|\t|\s+|,|，|。|。|，|;|；|；/;
 				var arr = value.split(reg_splice);
 				for(var str of arr){
-					if(!isNull.test(str))
-					list.insertBefore(createNode(str),list.firstElementChild)
+					if(!isNull.test(str)){
+						if(type == 1){
+							list.insertBefore(createNode(str),list.firstElementChild);
+						}else{
+							list.appendChild(createNode(str));
+						}
+						
+					}
+					
 				}
 
+			}
+
+			function isNull(str) {
+				return /^\s+$|^[\S]{0}$/.test(str);
+			}
+			function search_f() {
+				var keyWord = search.value;
+				if(!isNull(keyWord)){
+					[].forEach.call(list.children,function(item,index){
+						var innerHTML = item.innerHTML;
+						if(innerHTML.match(new RegExp('.*'+keyWord+'.*'))){
+							addClass(item,'style_match')
+						}else{
+							removeClass(item,'style_match');
+						}
+						// toogleClass(item,'style_match');
+						// alert(new RegExp('(\\s|^)'+'style_match'+'(\\s|$)').test(' stylematch '));
+
+					});
+				}
+
+			}
+
+			function toogleClass(obj,className) {
+				if(hasClass(obj,className)){
+					removeClass(obj,className);
+				}else{
+					addClass(obj,className);
+				}
+			}
+
+			function hasClass(obj,className){
+				return obj.className.match(new RegExp('(\\s|^)'+className+'(\\s|$)'));
+			}
+			function addClass(obj,addClassName) {
+				if(!hasClass(obj,addClassName)){
+					obj.className += addClassName;
+				}
+			}
+
+			function removeClass(obj,className) {
+				if(hasClass(obj,className)){
+					obj.className = obj.className.replace(new RegExp('(\\s|^)'+className+'(\\s|$)'),' ');
+				}
 			}
 			left_in.onclick = left_in_f;
 			right_in.onclick = right_in_f;
 			left_out.onclick = left_out_f;
 			right_out.onclick = right_out_f;
+			search_btn.onclick = search_f;
 	
 
 		})();
