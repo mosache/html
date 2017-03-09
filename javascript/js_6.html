@@ -5,39 +5,22 @@
 	<title>Document</title>
 	<style type="text/css">
 		* {margin: 0;padding: 0;}
-		.container {width: 1100px;position: absolute;left: 50%;margin-left: -550px;margin-top: 10px;text-align: center;height: 200px;font-size: 0;letter-spacing: -4px;word-spacing: -4px}
-		#list {list-style: none;overflow: hidden;position: relative;width: 100%;height: 100%;text-align: left;}
-		#list li {
-			background: red;color: #ffffff;
-			width:30px;				
-			height: 30px;
-			text-align: center;
-			font-size: 14px;
-			display: inline-block;
-			*display:inline;
-			zoom:1;
-			margin: 2px;
-			line-height: 30px;
-			vertical-align: bottom;
-			letter-spacing: normal;
-			word-spacing: normal;
-			position: absolute;
-			bottom: 0;
-			transition:left .2s ease-in-out;
-		}
-		button {letter-spacing: normal;word-spacing: normal;margin: 8px}
+		.container {width: 900px;position: absolute;left: 50%;margin-left: -450px;margin-top: 10px;text-align: center;}
+		#list {list-style: none;}
+		#list li {background: red;color: #ffffff;min-width:30px;height: 30px;text-align: center;font-size: 14px;float:left;margin: 8px}
+		#list li span {position: relative;top: 8px}
+		button {margin-top: 10px}
 	</style>
 </head>
 <body>	
 <div class="container">
-	<input type="text" id="input">
+	<textarea id="input" style="resize: none;width: 100%;height: 160px"></textarea><br>
 	<button type="button" id="left_in">左侧入</button>
 	<button type="button" id="right_in">右侧入</button>
-	&nbsp;&nbsp;
+	&nbsp;&nbsp;&nbsp;
 	<button type="button" id="left_out">左侧出</button>
-	<button type="button" id="right_out">右侧出</button>
-	<button type="button" id="sort">排序</button>
-	<br>
+	<button type="button" id="right_out">右侧出</button><br>
+	<input type="text" id="search">&nbsp;&nbsp;&nbsp;<button type="button" id="search_btn">搜索</button>
 
 	<ul id="list">
 	</ul>
@@ -45,28 +28,27 @@
 		
 	<script type="text/javascript">
 		(function(){
-			const maxNode = 30;
+			const maxNode = 60;
 			var left_in = document.getElementById("left_in");
 			var right_in = document.getElementById("right_in");
 			var left_out = document.getElementById("left_out");
 			var right_out = document.getElementById("right_out");
 			var list = document.getElementById("list");
 			var input = document.getElementById("input");
-			var sort = document.getElementById('sort');
+			
 			function left_in_f() {
 				var num = input.value;
-				if(!isNum(num)){
-					alert("input error!");
-					input.value = "";
-					return;
-				}
+				// if(!isNum(num)){
+				// 	alert("input error!");
+				// 	input.value = "";
+				// 	return;
+				// }
 				if(isChildNodeOverMax(maxNode)){
 					alert('too much children');
 					return;
 				}
-
-				list.insertBefore(createNode(num),list.firstChild);
-				setleft(list.children);
+				insertBefore(num);
+				// list.insertBefore(createNode(num),list.firstChild);
 				}
 			
 
@@ -82,7 +64,6 @@
 					return;
 				}
 				list.appendChild(createNode(num));
-				setleft(list.children);
 			}
 
 			function left_out_f() {
@@ -119,8 +100,7 @@
 				node.animEnd = function(){
 					let num = this.innerHTML;
 					list.removeChild(this);
-					// alert(num);
-					setleft(list.children);
+					alert(num);
 				};
 				timer = setInterval(function() {
 				var temp = node.style.opacity-=0.05;
@@ -135,7 +115,7 @@
 
 			function createNode(num) {
 				var numNode = document.createElement("li");
-				let height = 30+(num-10)*(100/91) + "px";
+				let height = 30+"px";
 				numNode.style.height = height;
 				numNode.style.lineHeight = height;
 				numNode.innerHTML = num;
@@ -146,37 +126,33 @@
 				return list.children.length == max;
 			}
 
-			function sort_f() {
-				var children = Array.from(list.children);
-				var sortedChildren = children.sort((a,b)=>{
-					return parseInt(a.innerHTML) - parseInt(b.innerHTML);
-				});
-				let i;
-				for(i =0;i<children.length;i++){
-					list.removeChild(children[i]);
-				}
-
-				for(i = 0;i<sortedChildren.length;i++){
-					list.appendChild(sortedChildren[i]);
-				}
-			}
-			/*reset the left of all <li>*/
-			function setleft(items) {
-				[].forEach.call(items,function(item,index){
-					item.style.left = `${5*(index+1)+30*index}px`;
-				});
-			}
 			list.addEventListener('click',function(event){
 				var evet  =event || window.event;
 				var target = event.target || event.srcElement;
 				if(target.nodeName != this.nodeName)
 				doAnim(target);
 			});
+
+			function insertBefore(value) {
+				var isNull = /^\s+$/;
+				
+				if(isNull.test(value)){
+					alert("null str!");
+					return;
+				}
+				let reg_splice = /\r|\t|\^\s+\$|,|，|。|。|，|;|；|；/;
+				var arr = value.split(reg_splice);
+				for(var str of arr){
+					if(!isNull.test(str))
+					list.insertBefore(createNode(str),list.firstElementChild)
+				}
+
+			}
 			left_in.onclick = left_in_f;
 			right_in.onclick = right_in_f;
 			left_out.onclick = left_out_f;
 			right_out.onclick = right_out_f;
-			sort.onclick = sort_f;
+	
 
 		})();
 
