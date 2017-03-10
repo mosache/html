@@ -6,16 +6,29 @@
 	<style type="text/css">
 		* {margin: 0;padding: 0}
 		html,body {width: 100%;height: 100%}
+		#select {position: absolute;right: 80px;top: 60px}
+		#start {position: absolute;right: 85px;top: 100px}
 	</style>
 </head>
 <body>
 	<div id="container" style="width: 100%;height: 100%;">
-		<canvas id="canvas" style="border: 2px solid #999;position: absolute;left: 50%;margin-left: -600px;top: 50%;margin-top: -300px"></canvas>
+		<canvas id="canvas" style="border: 2px solid #999;position: absolute;left: 50%;margin-left: -400px;top: 50%;margin-top: -300px">
+		</canvas>
+
+		<select name="TraverType" id="select">
+			<option value="-1" >------</option>
+			<option value="0" >前序</option>
+			<option value="1" >中序</option>
+			<option value="2">后序</option>
+		</select>
+		<button id="start">开始</button>
 	</div>
 	
 	<script type="text/javascript">
-		var i = 0;
+		var current_node = {};
+		var traversal_type = -1;
 		var circle = {
+			select_color:'#00ff00',
 			color : '#FF0000',
 			raduis: 20,
 			circle_magin : 10
@@ -40,6 +53,7 @@
 			this.data = data;
 			this.left = null;
 			this.right = null;
+			this.depth = 1;
 		}
 		/**Node end*/
 
@@ -71,8 +85,8 @@
 			function preOrder(node){
 				if(node!=null){
 					if(callBack){
-						callBack(node,i);
-						i++;
+						callBack(node);
+				
 					}	
 					preOrder(node.left);
 					preOrder(node.right);
@@ -84,8 +98,7 @@
 				if(node!=null){
 					midOrder(node.left);
 					if(callBack){
-						callBack(node,i);
-						i++;
+						callBack(node);
 					}	
 					midOrder(node.right);
 				}
@@ -97,27 +110,19 @@
 					backOrder(node.left);
 					backOrder(node.right);
 					if(callBack){
-						callBack(node,i);
-						i++;
+						callBack(node);
+					
 					}	
 				}
 			}
 
 		}
 
-		// Tree.prototype.createTree = function(node,dataArr){
-		// 	if(data <= 10){
-		// 		node = new Node(data);
-		// 		createTree(node.left);
-		// 	}
-		// }
 		Tree.prototype.draw = function(c){
 			c.font = text.font;
 			var drawWidth = c.cus_width;
 			var drawHeight = c.cus_height;
-			// tree.traversal(TraversalType.preOrder,function(node,index){
-			// 	drawNode(node,index);
-			// });
+			c.clearRect(0,0,drawWidth,drawHeight);
 			var root = tree._rootNode;
 			root.circle_x = drawWidth/2;
 			root.circle_y = circle.raduis + circle.circle_magin;
@@ -128,7 +133,7 @@
 					var circle_x , circle_y;
 					var parentNode = node.parentNode;
 					if(parentNode!=null){
-						circle_x = node.sideType == 1 ? parentNode.circle_x+2*circle.raduis + circle.circle_magin : parentNode.circle_x-(2*circle.raduis + circle.circle_magin);
+						circle_x = node.sideType == 1 ? parentNode.circle_x+(2*circle.raduis + circle.circle_magin) * (node.depth == 3? 2:1) : parentNode.circle_x-(2*circle.raduis + circle.circle_magin) * (node.depth == 3? 2:1);
 						circle_y = parentNode.circle_y+2*circle.raduis + circle.circle_magin;
 					}else{
 						circle_x = node.circle_x;
@@ -140,14 +145,27 @@
 					if(parentNode!=null){
 						c.beginPath();
 						c.fillStyle = line.color;
-						c.moveTo(parentNode.circle_x - Math.sqrt(Math.pow(circle.raduis,2)+Math.pow(circle.raduis,2))/2,parentNode.circle_y+Math.sqrt(50));
+						var x_offSet,y_offSet;
+						if(node.sideType){
+							x_offSet =  + Math.sqrt(Math.pow(circle.raduis,2)+Math.pow(circle.raduis,2))/2;
+							y_offSet = Math.sqrt(Math.pow(circle.raduis,2) - Math.pow(x_offSet,2));
+						}else{
+							x_offSet = -Math.sqrt(Math.pow(circle.raduis,2)+Math.pow(circle.raduis,2))/2;
+							y_offSet = Math.sqrt(Math.pow(circle.raduis,2) - Math.pow(x_offSet,2));
+						}
+						c.moveTo(parentNode.circle_x+x_offSet,parentNode.circle_y+y_offSet);
 						c.lineTo(node.circle_x,node.circle_y);
 						c.closePath();
 						c.stroke();
 					}
 
 					c.beginPath();
-					c.fillStyle = circle.color;
+					if(node.data == current_node.data){
+						c.fillStyle = circle.select_color;
+					}else{
+						c.fillStyle = circle.color;
+					}
+					
 					c.arc(circle_x,circle_y,circle.raduis,0,2 * Math.PI,true);
 					c.closePath();
 					c.fill();
@@ -159,10 +177,12 @@
 					if(node.left!=null){
 						node.left.sideType = 0;
 						node.left.parentNode = node;
+						node.left.depth = node.depth+1;
 					}
 					if(node.right!=null){
 						node.right.sideType = 1;
-						node.right.parentNode = node;						
+						node.right.parentNode = node;
+						node.right.depth = node.depth+1;						
 					}
 					drawNode(node.left);
 					drawNode(node.right);
@@ -172,6 +192,11 @@
 
 		/**tree end*/
 
+		function sleep(delay) {
+			var start = new Date().getTime();
+			while(new Date().getTime()<(start+delay));
+		}
+		
 		var root = new Node("A");
 		var n1 = new Node("B");
 		var n2 = new Node("C");
@@ -179,34 +204,53 @@
 		var n4 = new Node("E");
 		var n5 = new Node("F");
 		var n6 = new Node("G");
-
+		var n7 = new Node("H");
 		root.left = n1;
 		root.right = n2;
 		n1.left = n3;
 		n1.right = n5;
 		n3.right = n4;
 		n5.left = n6;
+		n6.right = n7;
 
 		var tree = new Tree(root);
+		var btn = document.getElementById('start');
+		btn.onclick = function(){
+			if(traversal_type == -1){
+				alert('please choose a traverl type !!!');
+				return;
+			}
+
+			if(traversal_type == 0)
+				tree.traversal(TraversalType.preOrder,function(node){
+					current_node = node;
+					// Thread.sleep(2000);	
+					// sleep(2000);
+				});
+			if(traversal_type == 1)
+				tree.traversal(TraversalType.midOrder,function(node){
+
+				});
+			if(traversal_type == 2)
+				tree.traversal(TraversalType.backOrder,function(node){
+
+				});
+
+		}
+		
+
+		var select =document.getElementById('select');
+		select.onchange = function(e){
+			traversal_type = select.value;				
+		}
 
 		var canvas = document.getElementById('canvas');
-
 		var c = canvas.getContext('2d');
-		canvas.width =1200;
+		canvas.width =800;
 		canvas.height = 600;
 		c.cus_width = canvas.width;
 		c.cus_height = canvas.height;
- 		// c.fillStyle = '#FF0000';
-		// c.beginPath();
-		// c.arc(canvas.width/2,canvas.height/2,20,0,2*Math.PI,true);
-		// c.fill();
-		// c.font = '30px Airal';
-		// c.fillStyle = '#ffffff';
-		// var textWidth = c.measureText('1').width;
-		// c.fillText('1',canvas.width/2-textWidth/2,canvas.height/2+10);
 		tree.draw(c);
-
-		// tree.traversal(TraversalType.backOrder);
 	</script>
 </body>
 </html>
