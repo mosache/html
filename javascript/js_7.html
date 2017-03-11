@@ -16,7 +16,7 @@
 		</canvas>
 
 		<select name="TraverType" id="select">
-			<option value="-1" >------</option>
+			<option value="-1" selected="selected">------</option>
 			<option value="0" >前序</option>
 			<option value="1" >中序</option>
 			<option value="2">后序</option>
@@ -191,11 +191,6 @@
 		}
 
 		/**tree end*/
-
-		function sleep(delay) {
-			var start = new Date().getTime();
-			while(new Date().getTime()<(start+delay));
-		}
 		
 		var root = new Node("A");
 		var n1 = new Node("B");
@@ -215,6 +210,7 @@
 
 		var tree = new Tree(root);
 		var btn = document.getElementById('start');
+		var funcs = [];
 		btn.onclick = function(){
 			if(traversal_type == -1){
 				alert('please choose a traverl type !!!');
@@ -223,18 +219,40 @@
 
 			if(traversal_type == 0)
 				tree.traversal(TraversalType.preOrder,function(node){
-					current_node = node;
-					// Thread.sleep(2000);	
-					// sleep(2000);
+					funcs.push(function(){
+						current_node = node;
+						tree.draw(c);
+					});
 				});
+
+
+				// alert(funcs.length);
 			if(traversal_type == 1)
 				tree.traversal(TraversalType.midOrder,function(node){
-
+					funcs.push(function(){
+						current_node = node;
+						tree.draw(c);
+					});
 				});
 			if(traversal_type == 2)
 				tree.traversal(TraversalType.backOrder,function(node){
-
+					funcs.push(function(){
+						current_node = node;
+						tree.draw(c);
+					});
 				});
+
+				var i =0;
+				var timer = setInterval(function(){
+					if(i == funcs.length){
+						current_node = {};
+						tree.draw(c);
+						funcs.length = 0;
+						clearInterval(timer);
+					}
+					funcs[i]();
+					i++;
+				},800);
 
 		}
 		
