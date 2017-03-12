@@ -210,7 +210,7 @@ search_btn.style.marginLeft = '20px';
 search_btn.onclick = function(){
 	resetColor();
 	var s = input.value;
-	if(!/^\s+$/.test(s)){
+	if(!/^\s+$|^.{0}$/.test(s)){
 		var arr = [];
 		tree.search(function(node){
 			arr.push(node);
@@ -232,7 +232,9 @@ search_btn.onclick = function(){
 		}else{
 			alert("not match!!!");
 		}
-	}
+	}else{
+			alert("input a value");
+		}
 };
 searchContainer.appendChild(search_btn);
 document.getElementsByTagName('body')[0].appendChild(searchContainer);
