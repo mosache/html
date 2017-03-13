@@ -32,10 +32,14 @@
 				input.style.borderColor= 'red';
 				hint.style.color = 'red';
 				hint.innerHTML = '不能为空!';
+			}else if(isValid(val)){
+				input.style.borderColor = '#0f0';
+				hint.style.color = '#0f0';
+				hint.innerHTML = 'YES';
 			}else{
-				input.style.borderColor = 'green';
-				hint.style.color = 'green';
-				hint.innerHTML = 'YES!';
+				input.style.borderColor = 'red';
+				hint.style.color = 'red';
+				hint.innerHTML = '必须为4～16位';
 			}
 		}
 		input.oninput = function(e){
@@ -49,7 +53,18 @@
 			}
 		}	
 
-
+		function isValid(val){
+			var sum = 0;
+			for (var i = 0; i < val.length; i++) {
+				var code = val.charCodeAt(i);
+				if(code >= 0x00 && code <= 0xff){
+					sum += 1;
+				}else{
+					sum += 2;
+				}
+			}
+			return sum >= 4 && sum <= 16;
+		}
 
 	</script>
 </body>
