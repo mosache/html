@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {margin: 0;padding:0;}
+		input {width: 250px;height: 25px;border-radius:5px;border: 2px solid #999}
+		.container {display: flex;justify-content: center;align-items: center;height: 200px}
+		button {width: 80px;height: 29px;background-color: #2f79ba;border:none;border-radius: 5px;color: white;font-size: 14px;margin-left: 10px;line-height: 29px}
+		button:active {background-color: #000}
+	</style>
+</head>
+<body>
+<div class="container">
+	<form style="display: flex;align-items: center;flex-direction: column;" name="f" action="#" method="post">
+		<div style="display: flex;align-items: center">
+			<input type="text" name=""> <button type="button" required>验证</button>
+		</div>
+		<p style="align-self: flex-start;color: #999;font-size: 14px;margin-top: 5px" id="hint_text">必填，长度为4～16个字符</p>
+	</form> 
+</div>
+	<script type="text/javascript">
+		var form = document.forms['f'];
+		var btn = document.querySelector('button');
+		var input = document.querySelector('input');
+		var hint = document.getElementById('hint_text');
+		btn.onclick = function() {
+			var val = input.value;
+			hint.style.visibility = 'visible';
+			if(/^\s+$|^.{0}$/.test(val)){
+				input.style.borderColor= 'red';
+				hint.style.color = 'red';
+				hint.innerHTML = '不能为空!';
+			}else{
+				input.style.borderColor = 'green';
+				hint.style.color = 'green';
+				hint.innerHTML = 'YES!';
+			}
+		}
+		input.oninput = function(e){
+			if(/^\s+$|^.{0}$/.test(e.currentTarget.value)){
+				hint.style.color = '#999';
+				input.style.borderColor = '#999';
+				hint.innerHTML = '必填，长度为4～16个字符';
+				hint.style.visibility = 'visible';
+			}else{
+				hint.style.visibility = 'hidden';
+			}
+		}	
+
+
+
+	</script>
+</body>
+</html>
