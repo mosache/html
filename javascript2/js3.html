@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {margin: 0;padding: 0}
+		form>label {display: block;padding: 10px;text-align: center;}
+		input[type=radio]#t2 {
+			margin-left: 20px
+		}
+		
+	</style>
+</head>
+<body>
+	<form name="form1">
+	<label id="radio_label">
+		<input type="radio" name="type" value="1" checked="checked" id="t1"><label for="t1">在校生</label>
+		<input type="radio" name="type" value="2" id="t2"><label for="t2">非在校生</label>
+	</label>
+	<label id="school_label">
+		学校	<select>
+					<option>北京</option>
+				</select>
+		<select>
+			<option>北京大学1</option>
+			<option>北京大学2</option>
+			<option>北京大学3</option>
+		</select>
+	</label>	
+	<label id="corp_label">
+		就业单位 <input type="text" name="corp">
+	</label>
+	</form>
+
+	<script type="text/javascript">
+		var school_label = document.getElementById('school_label');
+		var corp_label = document.getElementById('corp_label');
+		var mform = document.forms['form1'];
+		corp_label.style.display = 'none';
+		Array.from(mform.type).forEach(function(item){
+			item.onchange = function(e){
+				var val = mform.type.value;
+				if(val == 1){
+					school_label.style.display = 'block';
+					corp_label.style.display = 'none';
+				}else{
+					school_label.style.display = 'none';
+					corp_label.style.display = 'block';
+				}
+			};
+		});
+	</script>
+</body>
+</html>
