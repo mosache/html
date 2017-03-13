@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		form {padding: 20px;max-width: 400px;margin: auto;text-align: center;position: relative;}
+		input {border: 2px solid #999;width: 250px;height: 25px;border-radius: 5px;margin-left: 20px;margin-top: 10px;margin-right: 6px;}
+		button {width: 80px;height: 29px;background-color: #2f79ba;border:none;border-radius: 5px;color: white;font-size: 14px;margin: 10px;line-height: 29px;position: absolute;right: 33px}
+		button:active {background-color: #000;}
+		span {display: block;width: 80px;text-align: right;float: left;position: relative;top: 13px}
+	</style>
+</head>
+<body>
+	<form action="#" id="f">
+			<label for="name"><span>名称</span>
+			<input type="text" name="name" id="name"><br>
+			</label>
+
+			<label for="mima"><span>密码</span>
+			<input type="password" name="mima" id="mima"><br>
+			</label>
+
+			<label for="rmima"><span>密码确认</span>
+			<input type="text" name="rmima" id="rmima"><br>
+			</label>
+
+			<label for="email"><span>邮箱</span>
+			<input type="text" name="email" id="email"><br>
+			</label>
+
+			<label for="phone"><span>手机</span>
+			<input type="text" name="phone" id="phone"><br>
+			</label>
+			
+			<button id="btn" type="button">提交</button>
+	</form>
+	
+	<script type="text/javascript">
+
+		var rulesText = {
+			name : '必填,长度为4～16位字符',
+			mima : '必填,长度为4～16位字符',
+			rmima : '再次输入相同密码',
+			email : '输入邮箱',
+			phone : '手机'
+		};
+
+		var hintColor = {
+			normal : '#999',
+			success : '#0f0',
+			fail : '#f00',
+		};
+
+		var borderColor = {
+			selected : '#09f',
+			normal : '#999',
+			success : '#0f0',
+			fail : '#f00',
+		};
+
+		var successHint = {
+			name : '名称可用',
+			mima : '密码可用',
+			rmima : '密码输入一致',
+			email : '邮箱格式正确',
+			phone : '手机格式正确',
+		};
+
+		var failHint = {
+			name : '名称不可用',
+			mima : '密码格式错误',
+			rmima : '密码输入不一致',
+			email : '邮箱格式错误',
+			phone : '手机格式错误',
+		}
+		var validRule = {
+			name : function(value){
+				var sum = 0;
+				for(var i = 0;i<value.length;i++){
+					var code = value.charCodeAt(i);
+					if(code >= 0x00 && code <= 0xff){
+						sum += 1;
+					}else{
+						sum += 2;
+					}
+				}
+				return sum >= 4 && sum <= 16;
+			},
+			mima : function(value){
+				var sum = 0;
+				for(var i = 0;i<value.length;i++){
+					var code = value.charCodeAt(i);
+					if(code >= 0x00 && code <= 0xff){
+						sum += 1;
+					}else{
+						sum += 2;
+					}
+				}
+				return sum >= 4 && sum <= 16;
+			},
+			rmima : function(val){
+				return val == document.getElementById('mima').value &&!/^.{0}$/.test(val);
+			},
+
+			email : function(val){
+				return /^[a-zA-Z0-9]{1,}@[a-zA-Z0-9]{1,}\.[a-zA-Z]{1,}$/.test(val);
+			},
+
+			phone : function(val){
+				return /^1[0-9]{10}$/.test(val);
+			}
+		} 
+
+		var inputs = document.querySelectorAll('input');
+		Array.from(inputs).forEach((item) => {
+			item.onfocus = function(e) {
+				var input = e.currentTarget;
+				input.style.borderColor = borderColor.selected;
+				if(rulesText[input.name] && input.parentNode.lastElementChild.nodeName != 'P'){
+					var hint = document.createElement('p');
+					hint.style.fontSize = '12px';
+					hint.style.color = hintColor['normal'];
+					hint.innerHTML = rulesText[input.name];
+					input.parentNode.appendChild(hint);
+				}else{
+					input.parentNode.lastElementChild.innerHTML = rulesText[input.name];
+					input.parentNode.lastElementChild.style.color = hintColor['normal'];
+				}
+			} 
+
+			item.onblur = function(e){
+				var input = e.currentTarget;
+				// input.style.borderColor = borderColor.normal;
+				if(validRule[input.name](input.value)){
+					input.style.borderColor = borderColor.success;
+					var lastChild = input.parentNode.lastElementChild;
+					if(lastChild.nodeName == 'P'){
+						lastChild.style.color = hintColor['success'];   
+						lastChild.innerHTML  = successHint[input.name];
+					}else{
+						var hint = document.createElement('p');
+						hint.style.fontSize = '12px';
+						hint.style.color = hintColor['success'];
+						hint.innerHTML = successHint[input.name];
+						input.parentNode.appendChild(hint);
+					}
+				}else{
+					input.style.borderColor = borderColor.fail;
+					var lastChild = input.parentNode.lastElementChild; 
+					if(lastChild.nodeName == 'P'){
+						// input.parentNode.removeChild(lastChild);  
+						lastChild.style.color = hintColor['fail'];  
+						lastChild.innerHTML  = failHint[input.name];
+					}else{
+						var hint = document.createElement('p');
+						hint.style.fontSize = '12px';
+						hint.style.color = hintColor['fail'];
+						hint.innerHTML = failHint[input.name];
+						input.parentNode.appendChild(hint);
+					}
+				}
+			}
+		});
+
+		function onSubmit(){
+			var f = document.forms['f'];
+			var inputs = f.querySelectorAll('input');
+			var valid = true;
+			for(var i of inputs){
+				var event = new UIEvent('blur',{});
+				i.dispatchEvent(event);
+				valid = valid & validRule[i.name](i.value);
+			}
+
+			if(valid){
+				alert('提交成功');
+			}
+		}
+
+		var btn = document.getElementById('btn');
+		btn.onclick = onSubmit;
+
+	</script>
+</body>
+</html>
