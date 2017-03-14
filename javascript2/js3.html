@@ -4,12 +4,32 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<style type="text/css">
-		* {margin: 0;padding: 0}
+		* {margin: 0;padding: 0;font-size: 16px}
 		form>label {display: block;padding: 10px;text-align: center;}
+		input[type=radio]#t2,input[type=radio]#t1{
+			margin-right: 5px;
+		}
 		input[type=radio]#t2 {
-			margin-left: 20px
+			margin-left: 120px
+		}
+		input[name=corp] {
+			margin-left: 40px;
+			border: 2px solid #999;
+			border-radius: 5px;
+			width: 160px;
 		}
 		
+		select{
+			margin: 20px;
+		}
+		select:nth-child(1){
+			width: 80px;
+		}
+		select:nth-child(2){
+			width: 160px;
+		}
+
+
 	</style>
 </head>
 <body>
@@ -19,10 +39,11 @@
 		<input type="radio" name="type" value="2" id="t2"><label for="t2">非在校生</label>
 	</label>
 	<label id="school_label">
-		学校	<select>
-					<option>北京</option>
+		学校	<select id="city">
+					<option value="1">北京</option>
+					<option value="2">上海</option>
 				</select>
-		<select>
+		<select id="school">
 			<option>北京大学1</option>
 			<option>北京大学2</option>
 			<option>北京大学3</option>
@@ -50,6 +71,30 @@
 				}
 			};
 		});
+
+		var city_select = document.getElementById('city');
+		var school_select = document.getElementById('school');
+		city_select.onchange = function(e){
+			var val = e.currentTarget.value;
+			for(var len = school_select.children.length,i = len - 1,childrens = school_select.children ; i >= 0  ; i--){
+				 var item = childrens[i];
+				 school_select.removeChild(item);
+			}
+			if(val == 1){
+				for(var i = 0 ; i < 3 ; i++){
+					var o = document.createElement('option');
+					o.innerHTML = '北京大学'+(i+1);
+					school_select.appendChild(o);
+				}
+
+			}else {
+				for(var i = 0 ; i < 3 ; i++){
+					var o = document.createElement('option');
+					o.innerHTML = '上海大学'+(i+1);
+					school_select.appendChild(o);
+				}
+			}
+		}
 	</script>
 </body>
 </html>
