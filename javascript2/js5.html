@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			font-size: 14px;
+			font-style: normal;
+		
+		}
+		
+		table {
+			margin: 20px auto;
+		}
+		td{
+			width: 40px;
+			height: 40px;
+			border-bottom: 1px solid #999;
+			border-right: 1px solid #999;
+			text-align: center;
+		}
+		
+
+		tr:nth-child(1) td {
+			border:none;
+			border-bottom: 1px solid #000;
+			text-align: center;
+		}
+
+		tr:nth-child(1) td:nth-child(1),tr:nth-child(1) td:nth-child(11){
+			border-right: none;
+		
+		}
+	
+
+		tr>td:nth-child(1) {
+			border: none;
+			border-right: 1px solid #000
+		}
+		tr>td:nth-child(11) {
+			border-right: 1px solid #000;
+		}
+
+		tr:nth-child(11) td {
+			border-bottom: 1px solid #000;
+		}
+
+		tr:nth-child(11) td:nth-child(1) {
+			border-bottom: none;
+		}
+		
+		div {
+			width: 180px;
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		input {
+			width: 100px;
+		}
+
+	</style>
+</head>
+<body>
+	<table cellspacing="0">
+		<tr>
+			<td> </td>
+			<td>1</td>
+			<td>2</td>
+			<td>3</td>
+			<td>4</td>
+			<td>5</td>
+			<td>6</td>
+			<td>7</td>
+			<td>8</td>
+			<td>9</td>
+			<td>10</td>
+		</tr>
+
+		<tr>
+			<td>1</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>5</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>6</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>7</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>8</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>9</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr>
+			<td>10</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</table>
+	<div>
+		<input type="text" id="cmd"> <button type="button" id="btn">执行</button>
+	</div>
+	
+	<script type="text/javascript">
+		'use strict';
+		var squre = (function(){
+
+			function Squre() {
+				this.squre = init();
+				this.preRow = -1;
+				this.preCol = -1;
+				this.direction = 0;	
+				this.table = null;
+			}
+
+			function init(){
+				var squre = document.createElement('div');
+				var blue = document.createElement('div');
+				blue.style.backgroundColor = '#00f';
+				blue.style.height = '30%';
+				blue.style.width = '100%';
+				squre.appendChild(blue);
+
+				var red = document.createElement('div');
+				red.style.backgroundColor = '#f00';
+				red.style.height = '70%';
+				red.style.width = '100%';
+				squre.appendChild(red);
+
+				squre.style.width = '100%';
+				squre.style.height = '100%';
+				return squre;
+			}
+
+			Squre.prototype.renderInTable = function(table, row, col){
+				this.table = table;
+				if(this.preRow != -1){
+					table.children[0].children[this.preRow].children[this.preCol].removeChild(table.children[0].children[this.preRow].children[this.preCol].firstElementChild);
+				}
+				
+				table.children[0].children[row].children[col].appendChild(this.squre);
+				this.preRow = row;
+				this.preCol = col;
+
+			}
+			Squre.prototype.changeDirection = function(type){
+				var nowDirection = this.direction;
+				//left
+				if(type == 1){
+					this.direction -= 1;
+				}else if(type == 2){
+					//right
+					this.direction += 1;
+				}else if(type == 3){
+					//back
+					this.direction += 2;
+				}
+				if(this.direction >= 0){
+					this.direction = this.direction % 4;
+				}else{
+					this.direction = 3;
+				}
+				// this.squre.style.transform = 'rotate('+this.direction*90+'deg)';
+				var style = document.createElement('style');
+				var keyFrames = '@keyframes anim {from{transform:rotate('+nowDirection*90+'deg)} to{transform:rotate('+this.direction*90+'deg)}}';
+				var anim = '\n.amin'+this.direction+'{animation:anim 2s forwards}';
+				style.innerHTML  = keyFrames + anim;
+				document.getElementsByTagName('head')[0].appendChild(style);
+				var self = this;
+				setTimeout(function(){
+					self.squre.className = 'amin'+self.direction;
+				},0);
+				
+				// this.renderInTable(this.table,this.preRow,this.preCol);
+			}
+
+			Squre.prototype.go = function(){
+				switch(this.direction){
+					case 0 :
+						var row = this.preRow - 1;
+						if(row == 0){
+							alert('can not go forword more!!');
+							return;
+						}
+						this.renderInTable(this.table,row,this.preCol);
+						break;
+					case 1 :
+						var col = this.preCol + 1;
+						if(col > 10){
+							alert('can not go right more!!');
+							return;
+						}
+						this.renderInTable(this.table,this.preRow,col);
+						break;
+					case 2 :
+						var row = this.preRow + 1;
+						if(row > 10){
+							alert('can not go back more!!');
+							return;
+						}
+						this.renderInTable(this.table,row,this.preCol);
+					break;
+					case 3 :
+						var col = this.preCol - 1;
+						if(col == 0){
+							alert('can not go left more!!');
+							return;
+						}
+						this.renderInTable(this.table,this.preRow,col);
+					break;
+					default :
+						alert('error cmd!');
+					break;
+				}
+			}
+			return new Squre();
+		})();
+		
+
+
+		
+
+		var table = document.querySelector('table');
+		squre.renderInTable(table,4,4);
+
+		var btn = document.getElementById('btn');
+		var input = document.querySelector('input');
+		btn.onclick = function(e){
+			var val = input.value.toLowerCase().replace(/\s+/g,'');
+			if(val == 'tunrig'){
+				squre.changeDirection(2);
+			}else if(val == 'tunlef'){
+				squre.changeDirection(1);
+			}else if(val == 'tunbac'){
+				squre.changeDirection(3);
+			}else if(val == 'go'){
+				squre.go();
+			}else{
+				alert('cmd error！！');
+			}
+		}
+	</script>
+</body>
+</html>
