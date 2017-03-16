@@ -4,6 +4,32 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<style type="text/css">
+/*		 @-webkit-keyframes anim {
+		 	from {
+				 -webkit-transform: rotate(0deg);
+		 	}
+
+		 	to {
+				-webkit-transform: rotate(90deg);
+		 	}
+		 }
+		
+		.anim {
+			-webkit-animation:anim 1s forwards;
+		}*/
+		@keyframes anim {
+		 	from {
+				transform: rotate(0deg);
+		 	}
+
+		 	to {
+				transform: rotate(90deg);
+		 	}
+		 }
+		
+		.anim {
+			animation:anim 1s forwards;
+		}
 		* {
 			margin: 0;
 			padding: 0;
@@ -14,6 +40,7 @@
 		
 		table {
 			margin: 20px auto;
+			position: relative;
 		}
 		td{
 			width: 40px;
@@ -61,7 +88,10 @@
 		input {
 			width: 100px;
 		}
-
+		
+		.moveAnim {
+			transition: left 1s ease-in-out , top 1s ease-in-out;
+		}
 	</style>
 </head>
 <body>
@@ -217,14 +247,16 @@
 	
 	<script type="text/javascript">
 		'use strict';
-		var squre = (function(){
-
+		var table = document.querySelector('table');
+		var squre = (function(table,initRow,initCol){
+			var border_width = 1;
+			var cell_width = 40;
 			function Squre() {
 				this.squre = init();
-				this.preRow = -1;
-				this.preCol = -1;
+				this.row = initRow;
+				this.col = initCol;
 				this.direction = 0;	
-				this.table = null;
+				this.table = table;
 			}
 
 			function init(){
@@ -241,24 +273,29 @@
 				red.style.width = '100%';
 				squre.appendChild(red);
 
-				squre.style.width = '100%';
-				squre.style.height = '100%';
+				squre.style.width = '40px';
+				squre.style.height = '40px';
+				squre.style.position = 'absolute';
+				squre.style.top = initRow*(border_width+cell_width)+'px';
+				squre.style.left = initCol*(border_width+cell_width)+'px'
+				squre.className = 'moveAnim';
+				table.appendChild(squre);
 				return squre;
 			}
 
-			Squre.prototype.renderInTable = function(table, row, col){
-				this.table = table;
-				if(this.preRow != -1){
-					table.children[0].children[this.preRow].children[this.preCol].removeChild(table.children[0].children[this.preRow].children[this.preCol].firstElementChild);
-				}
-				
-				table.children[0].children[row].children[col].appendChild(this.squre);
-				this.preRow = row;
-				this.preCol = col;
+			Squre.prototype.renderInTable = function(){
+
+				this.squre.style.top = (this.row*(border_width+cell_width))+'px';
+				this.squre.style.left = (this.col*(border_width+cell_width))+'px';
+				// table.appendChild(this.squre);			
+				// table.children[0].children[row].children[col].appendChild(this.squre);
+				// this.preRow = row;
+				// this.preCol = col;
 
 			}
 			Squre.prototype.changeDirection = function(type){
 				var nowDirection = this.direction;
+				var direction = type == 1 ? -1 : type == 3? 2:1;
 				//left
 				if(type == 1){
 					this.direction -= 1;
@@ -274,68 +311,75 @@
 				}else{
 					this.direction = 3;
 				}
-				// this.squre.style.transform = 'rotate('+this.direction*90+'deg)';
-				var style = document.createElement('style');
-				var keyFrames = '@keyframes anim {from{transform:rotate('+nowDirection*90+'deg)} to{transform:rotate('+this.direction*90+'deg)}}';
-				var anim = '\n.amin'+this.direction+'{animation:anim 2s forwards}';
-				style.innerHTML  = keyFrames + anim;
-				document.getElementsByTagName('head')[0].appendChild(style);
 				var self = this;
-				setTimeout(function(){
-					self.squre.className = 'amin'+self.direction;
-				},0);
+				if(arguments.length != 1){
+					doAnim(nowDirection,self,direction,1);
+				}else{
+					doAnim(nowDirection,self,direction);
+				}
 				
-				// this.renderInTable(this.table,this.preRow,this.preCol);
 			}
 
+			function doAnim(nowDirection,self,direction){
+				var anim = document.styleSheets[0].cssRules[0].cssRules[0];
+				var anim2 = document.styleSheets[0].cssRules[0].cssRules[1];
+				anim.style.transform = 'rotate('+nowDirection * 90+'deg)';
+
+				anim2.style.transform = 'rotate('+ (nowDirection * 90 + direction*90)+'deg)';
+				self.squre.classList.add('anim');
+				var args = arguments;
+				self.squre.addEventListener('animationend',function hehe(){
+					self.squre.style.transform = 'rotate('+self.direction * 90+'deg)'
+					self.squre.classList.remove('anim');
+					if(args.length != 3){
+						self.go();
+					}
+					self.squre.removeEventListener('animationend',hehe);
+				});
+			}
 			Squre.prototype.go = function(){
 				switch(this.direction){
 					case 0 :
-						var row = this.preRow - 1;
+						var row = this.row - 1;
 						if(row == 0){
 							alert('can not go forword more!!');
 							return;
 						}
-						this.renderInTable(this.table,row,this.preCol);
+						this.row = row;
 						break;
 					case 1 :
-						var col = this.preCol + 1;
+						var col = this.col + 1;
 						if(col > 10){
 							alert('can not go right more!!');
 							return;
 						}
-						this.renderInTable(this.table,this.preRow,col);
+						this.col = col;
 						break;
 					case 2 :
-						var row = this.preRow + 1;
+						var row = this.row + 1;
 						if(row > 10){
 							alert('can not go back more!!');
 							return;
 						}
-						this.renderInTable(this.table,row,this.preCol);
+						this.row = row;
 					break;
 					case 3 :
-						var col = this.preCol - 1;
+						var col = this.col - 1;
 						if(col == 0){
 							alert('can not go left more!!');
 							return;
 						}
-						this.renderInTable(this.table,this.preRow,col);
+						this.col = col;
 					break;
 					default :
 						alert('error cmd!');
 					break;
 				}
+				this.renderInTable();
 			}
 			return new Squre();
-		})();
+		})(table,1,1);
 		
-
-
-		
-
-		var table = document.querySelector('table');
-		squre.renderInTable(table,4,4);
 
 		var btn = document.getElementById('btn');
 		var input = document.querySelector('input');
@@ -349,6 +393,8 @@
 				squre.changeDirection(3);
 			}else if(val == 'go'){
 				squre.go();
+			}else if(val == 'gorig'){
+				squre.changeDirection(2,1);
 			}else{
 				alert('cmd error！！');
 			}
