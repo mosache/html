@@ -23,7 +23,7 @@
 		}
 		#dialog {
 			border: 1px solid red;
-			width: 40%
+			width: 40%;
 			height:45%;
 			position: absolute;
 			left: 50%;
@@ -49,25 +49,23 @@
 		}
 		#title {
 			padding: 10px;
-			height: 20px;
+			height: 20%;
 			text-align: center;
+			box-sizing: border-box;;
 		}
 		#content {
 			padding: 10px;
-			height: 200px;
+			height: 80%;
 			position: relative;
 			text-align: left;
+			box-sizing: border-box;
 		}
 
 	</style>
 </head>
 <body>
-<!-- 	  <div id="mask">
-	  	<div id="dialog">
-	  		<div id="title">这是标题</div>
-	  		<div id="content">this is content~~~~~~~~~~~~~~~~</div>
-	  	</div>
-	  </div> -->
+		<div style="padding: 20px;position: absolute;">press 's'....</div>
+
 	  <script type="text/javascript">
 	  		function Dialog(title,message) {
 	  			this.actions = [];
@@ -76,8 +74,13 @@
 	  			this.mask = null;
 	  			this.dialog = null;
 	  			this.isShow = false;
+	  			this.content = null;
 	  		}
 
+	  		function Action(title,callBack){
+	  			this.title = title;
+	  			this.callBack = callBack;
+	  		}
 	  		Dialog.prototype.init = function(){
 	  			var mask = document.createElement('div');
 	  			mask.id = 'mask';	
@@ -85,56 +88,78 @@
 
 	  			var dialog = document.createElement('div');
 	  			dialog.id = 'dialog';
+	  			var self = this;
+	  			dialog.addEventListener('animationend',function(e){
+	  				document.getElementById('title').innerHTML = self.title;
+	  				document.getElementById('content').innerHTML = self.message;
+	  				for(var i = 0 ;i < self.actions.length ; i ++){
+		  				var action = self.actions[i];
+		  				var actionE = document.createElement('button');
+		  				actionE.innerHTML = action.title;
+		  				actionE.style.position = 'absolute';
+		  				actionE.style.width = '60px';
+		  				actionE.style.right = (10*(i+1)+i*60)+"px";
+		  				actionE.style.bottom = '10px';
+		  				actionE.onclick = action.callBack;
+		  				self.content.appendChild(actionE);
+	  				}
+	  			});
 
 	  			var title = document.createElement('div');
 	  			title.id = 'title';
-
+	  		
 	  			var content = document.createElement('div');
 	  			content.id = 'content';
+	  			this.content = content;
 	  			dialog.appendChild(title);
 	  			dialog.appendChild(content);
 	  			this.dialog = dialog;
-	  		}
 
-	  		Dialog.prototype.show = function(){
-	  			if(!this.mask){
-	  				this.init();
-	  			}
 	  			document.getElementsByTagName('body')[0].appendChild(this.mask);
 	  			this.mask.appendChild(this.dialog);
 	  			this.isShow = true;
+	  		}
+
+	  		Dialog.prototype.show = function(){
+	  		
+	  				this.init();
+	  			
+
 	  		}
 	  		Dialog.prototype.dismiss = function(){
 	  			if(this.isShow){
 	  				this.mask.parentNode.removeChild(this.mask);
 	  				this.isShow = false;
-	  				this.mask = null;
-	  				this.dialog = null;
+	  				// this.mask = null;
+	  				// this.dialog = null;
+	  				// this.content = null;
 	  			}
 	  		}
 
-	  		var dialog = new Dialog();
-	  		dialog.show();
 
-	  		// document.querySelector('body').onkeydown = function(e){
-	  		// 	alert(e.which);
-	  		// };
-
+	  		Dialog.prototype.addAction = function(title,callBack){
+	  			this.actions.push(new Action(title,callBack));
+	  		}
+	  		var dialog = new Dialog('this is a title','this is content');
 	  		document.querySelector('body').addEventListener('keydown',function(e){
 	  			var e = window.event || e;
-	  			var code = e.keyCode || e.which;
-	  			if(code == 13){
-	  				dialog.dismiss();
-	  			}
+	  			code = e.keyCode || e.which;
 	  			if(String.fromCharCode(code) == 'S'){
 	  				if(!dialog.isShow){
 						dialog.show();
 	  				}else{
-	  					alert('already show!!!');
-	  				}
-	  						
+	  					dialog.dismiss();
+	  				}		
 	  			}
 	  		});
-	  </script>
+
+	  		dialog.addAction('action',function(){
+	  			alert('l am clicked!!1');
+	  		});
+
+	  		dialog.addAction('action2',function(){
+	  			alert('l am clicked!!2');
+	  		});
+	  </script>	
 </body>
 </html>
